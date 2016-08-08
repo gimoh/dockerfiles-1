@@ -6,7 +6,8 @@
 # Contributors:
 # Codenvy, S.A. - initial API and implementation
 
-FROM codenvy/ubuntu_jre
+#FROM codenvy/ubuntu_jre
+FROM gimoh/codenvy_ubuntu_jre
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV CHE_MYSQL_PASSWORD=che
@@ -17,17 +18,16 @@ ENV CHE_MYSQL_USER=che
 RUN sudo apt-get update && \
     sudo apt-get install -y \
     apache2 \
-    php5 \
-    php5-mhash \
-    php5-mcrypt \
-    php5-curl \
-    php5-mysql \
-    php5-gd \
-    libapache2-mod-php5 \
-    php5-cli \
-    php5-json \
-    php5-cgi \
-    php5-sqlite
+    php7.0 \
+    php7.0-mcrypt \
+    php7.0-curl \
+    php7.0-mysql \
+    php7.0-gd \
+    libapache2-mod-php7.0 \
+    php7.0-cli \
+    php7.0-json \
+    php7.0-cgi \
+    php7.0-sqlite3
 RUN sudo sed -i 's/\/var\/www\/html/\/projects/g'  /etc/apache2/sites-available/000-default.conf && \
     sudo sed -i 's/None/All/g' /etc/apache2/sites-available/000-default.conf && \
     echo "ServerName localhost" | sudo tee -a /etc/apache2/apache2.conf && \
@@ -44,9 +44,7 @@ RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/
     sudo rm -rf /var/lib/apt/lists/* && \
     sudo sed -i.bak 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf && \
     sudo service mysql restart && \
-    sudo mysql -uroot -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%'; FLUSH PRIVILEGES;" && \
-    sudo service mysql restart && \
-    sudo service mysql restart && sudo mysql -uroot -e "CREATE USER '$CHE_MYSQL_USER'@'%' IDENTIFIED BY '"$CHE_MYSQL_PASSWORD"'" && \
+    sudo mysql -uroot -e "CREATE USER '$CHE_MYSQL_USER'@'%' IDENTIFIED BY '"$CHE_MYSQL_PASSWORD"'" && \
     sudo mysql -uroot -e "GRANT ALL PRIVILEGES ON *.* TO '$CHE_MYSQL_USER'@'%' IDENTIFIED BY '"$CHE_MYSQL_PASSWORD"'; FLUSH PRIVILEGES;" && \
     sudo mysql -uroot -e "CREATE DATABASE $CHE_MYSQL_DB;"
 
